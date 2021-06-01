@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/style/css/all.min.css">
+    <title>預約賞車</title>
+    <script src="https://d.line-scdn.net/liff/1.0/sdk.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
+    <script>
+        // function initializeApp(data) {
+        //     var userid = data.context.userId;  //取得LINE Id
+        // }
+        // function backtext(msg){
+        //     liff.sendMessages([  //推播訊息
+        //         {
+        //             type: 'text',
+        //             text: msg
+        //         }
+        //     ])
+        //         .then(() => {
+        //             liff.closeWindow();  //關閉視窗
+        //         });
+        // }
+        function reserve(type, name, phone, inDate, isOk ) {
+            if (type == '' || name == '' || phone == '' || inDate == '') {  //資料檢查
+                alert('所有欄位都要填寫！');
+                return;
+            }
+            else if (isOk !== 'ok') {
+                alert('請閱讀並同意服務條款');
+                return;
+            }
+            var msg = "###";  //回傳訊息字串
+            msg = msg + type + "/";
+            msg = msg + name + "/";
+            msg = msg + phone + "/";
+            msg = msg + inDate + "/";
+            var etext = "客人預約的資料如下:</br>";
+            etext += "預約人：" + name + "</br>";
+            etext += "連絡電話：" + phone + "</br>";
+            etext += "賞車車型：" + type + "</br>";
+            etext += "預約日期：" + inDate + "</br>";
+            etext += "https://porschelinebot.herokuapp.com/admin";
+            Email.send({
+                // SecureToken: "a62e1877-faef-4507-9207-490a577e46a5",
+                // To: 'cecilia.wang@porsche-hsinchu.tw, ronny.liu@porsche-hsinchu.tw, jasmine.chen@porsche-hsinchu.tw, mika.hsu@porsche-hsinchu.tw',
+                To:'oiuuiooiu@icloud.com',
+                From: "新竹保時捷預約系統<info@porsche-hsinchu.tw>",
+                Subject: "預約賞車" + type + "/" + inDate,
+                Body: etext,
+            })
+                .then(() => {
+                    // backtext(msg);
+                    console.log("ok");
+                })
+        }
+
+        $(document).ready(function () {
+            liff.init(function (data) {  //初始化LIFF
+                initializeApp(data);
+            });
+            $('#btn_reserve').click(function (e) {  //按下確定鈕
+                reserve($('#sel_type').val(), $('#txb_name').val(), $('#txb_phone').val(), $('#in_date').val(), $('input[name=okOption]:checked').val());
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-1"></div>
+            <div class="col-10 containerIn p-3 borderRadius">
+                <div class="d-flex justify-content-center">
+                    <div class="imgRadius">
+                        <img src="assets/images/TA20Q2DOX0002_low.jpg" alt="" class="mb-3">
+                    </div>
+                </div>
+                <div class="row" >
+                    <div class="col-12">
+                        <!-- 車型 -->
+                        <div class="input-group mb-4">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text bg-white w40"><i class="fas fa-car"></i></div>
+                            </div>
+                            <select class="form-control" id="sel_type">
+                                <option selected>718</option>
+                                <option>911</option>
+                                <option>Taycan</option>
+                                <option>Panamera</option>
+                                <option>Macan</option>
+                                <option>Cayenne</option>
+                            </select>
+                        </div>
+                        <!-- name -->
+                        <div class="input-group mb-4">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text bg-white w40"><i class="fas fa-user"></i></div>
+                            </div>
+                            <input type="text" class="form-control" id="txb_name" placeholder="您的大名">
+                        </div>
+                        <!-- phone -->
+                        <div class="input-group mb-4">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text bg-white w40 d-flex justify-content-center"><i
+                                        class="fas fa-mobile-alt"></i></div>
+                            </div>
+                            <input type="number" class="form-control" id="txb_phone" placeholder="09XXXXXXXX"><span class='error3 text-danger d-flex justify-content-center align-items-center'></span>
+                        </div>
+                        <!-- date -->
+                        <div class="input-group mb-4">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text bg-white w40 d-flex justify-content-center"><i
+                                        class="far fa-calendar-alt "></i></div>
+                            </div>
+                            <input type="date" class="form-control" id="in_date" placeholder="">
+                        </div>
+                        <!-- 同意條款 -->
+                        <div class="d-flex justify-content-center align-items-center mb-3">
+                            <input type="checkbox" value="ok" id="checkOk" class="m-0" name="okOption">
+                            <p class="m-0 ml-2">同意<a type="button" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                                    class="text-primary">服務條款</a></p>
+                        </div>
+                        <button class="btn btn-dark btn-block mb-2" id="btn_reserve">確定</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-1"></div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">個資保護聲明及蒐集處理利用同意書</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <p>本人同意智華汽車股份有限公司及台灣保時捷車業股份有限公司為保護本人的個人資料，依據個人資料保護法規定，於下列目的範圍內，得直接或間接蒐集，處理及利用本人個人資料：</p>
+                    <ol>
+                        <li class="mb-2">
+                            蒐集目的：基於行銷、及提供客戶服務及管理（包括以本人所提供之個人資料確認本人的身分、與本人進行聯絡、提供上開公司及關係企業或合作伙伴相關之服務及資訊、電話訪問、統計分析等），於必要範圍內蒐集、處理、利用及國際傳遞。
+                        </li>
+                        <li class="mb-2">個人資料類別：提供之個人資料，包括姓名、聯絡方式、E-mail或其他得以直接或間接識別本人個人之資料。</li>
+                        <li class="mb-2">使用期間、地區、對象、方式：
+                            <ul>
+                                <li>期間：上開公司存續期間或依法令之資料保存期間。</li>
+                                <li>地區：上開公司營運地區及海外地區。</li>
+                                <li>對象：智華汽車股份有限公司、其母公司、關係企業或擁有一定比例以上股份之其他公司及其他有業務往來合作機構。</li>
+                                <li>方式：以電話、簡訊、電子郵件、紙本或其他適當方式。</li>
+                            </ul>
+                        </li>
+                        <li>本人對於上開公司保有之個人資料，日後經適當說明後，得進行查詢、請求閱覽、製給複製本、補充或更正、請停止蒐集、處理或利用，以及刪除本人之個人資料，查詢、請求閱覽及製給複製本，將酌收必要成本費用，惟如因本人請求上述作為所造成之權益受損，上開公司不需負損害賠償責任。
+                        </li>
+                    </ol>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">我已詳細閱讀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            var rule3=/^09\d{8}$/;
+            $("#txb_phone").blur(function(){
+                if(rule3.test($(this).val())){
+                    $('.error3').text('')
+                    
+                }else{
+                    $('.error3').text('不符合規則，請輸入「09xxxxxxxx」')
+                    
+                }
+            })
+        })
+    </script>
+</body>
+
+</html>
