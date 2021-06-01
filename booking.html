@@ -50,16 +50,19 @@
             etext += "預約日期：" + inDate + "</br>";
             etext += "https://porschelinebot.herokuapp.com/admin";
             Email.send({
+                Host : "smtp.mail.yahoo.com",
                 // SecureToken: "a62e1877-faef-4507-9207-490a577e46a5",
                 // To: 'cecilia.wang@porsche-hsinchu.tw, ronny.liu@porsche-hsinchu.tw, jasmine.chen@porsche-hsinchu.tw, mika.hsu@porsche-hsinchu.tw',
-                To:'oiuuiooiu@icloud.com',
-                From: "新竹保時捷預約系統<info@porsche-hsinchu.tw>",
+                Username : "k122603130",
+                Password : "k485483UIO",
+                To:'oiuuiooiu@icloud.com,cecilia.wang@porsche-hsinchu.tw',
+                From: "新竹保時捷預約系統<k122603130@yahoo.comtw>",
                 Subject: "預約賞車" + type + "/" + inDate,
                 Body: etext,
             })
                 .then(() => {
                     // backtext(msg);
-                    console.log("ok");
+                    console.log(etext);
                 })
         }
 
